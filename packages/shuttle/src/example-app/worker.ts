@@ -9,9 +9,11 @@ export function getWorker(app: App, redis: Redis | Cluster, log: pino.Logger, co
   const worker = new Worker(
     QUEUE_NAME,
     async (job: Job) => {
+      log.info(job.name);
       if (job.name === "reconcile") {
         const start = Date.now();
-        const fids = job.data.fids as number[];
+        const fids = (job.data.fids as number[]).sort((a, b) => a - b);
+        log.info("Reconciling fids", fids.length);
         await app.reconcileFids(fids);
         const elapsed = (Date.now() - start) / 1000;
         const lastFid = fids[fids.length - 1];
