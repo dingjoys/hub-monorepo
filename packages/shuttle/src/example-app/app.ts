@@ -262,7 +262,8 @@ export class App implements MessageHandler {
           log.error("Failed to get max fid", getInfoResult.error);
           throw getInfoResult.error;
         } else {
-          maxFid = getInfoResult?._unsafeUnwrap()?.dbStats?.numFidEvents;
+          log.info("Got max fid", getInfoResult?._unsafeUnwrap());
+          maxFid = getInfoResult?._unsafeUnwrap()?.dbStats?.numFidRegistrations;
           if (!maxFid) {
             log.error("Failed to get max fid");
             throw new Error("Failed to get max fid");
