@@ -87,11 +87,14 @@ export class App implements MessageHandler {
     hubSSL = false,
   ) {
     const db = getDbClient(dbUrl, dbSchema);
+    log.info("DB created");
     const hub = getHubClient(hubUrl, { ssl: hubSSL });
     const redis = RedisClient.create(redisUrl);
+    log.info("Redis created");
     const eventStreamForWrite = new EventStreamConnection(redis.client);
     const eventStreamForRead = new EventStreamConnection(redis.client);
     const shardKey = totalShards === 0 ? "all" : `${shardIndex}`;
+    log.info("Shard key created");
     const hubSubscriber = new EventStreamHubSubscriber(
       hubId,
       hub,
@@ -104,8 +107,9 @@ export class App implements MessageHandler {
       shardIndex,
       SUBSCRIBE_RPC_TIMEOUT,
     );
+    log.info("Hub subscriber created");
     const streamConsumer = new HubEventStreamConsumer(hub, eventStreamForRead, shardKey);
-
+    log.info("Stream consumer created");
     return new App(db, dbSchema, redis, hubSubscriber, streamConsumer);
   }
 
