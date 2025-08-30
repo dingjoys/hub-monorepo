@@ -332,9 +332,8 @@ if (import.meta.url.endsWith(url.pathToFileURL(process.argv[1] || "").toString()
     const app = App.create(POSTGRES_URL, POSTGRES_SCHEMA, REDIS_URL, HUB_HOST, TOTAL_SHARDS, SHARD_INDEX, HUB_SSL);
     log.info("App created");
     const worker = getWorker(app, app.redis.client, log, CONCURRENCY);
-    log.info("Worker created");
+    log.info("Worker running");
     await worker.run();
-    log.info("Worker started");
   }
 
   // for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
