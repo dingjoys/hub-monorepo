@@ -200,20 +200,22 @@ export class App implements MessageHandler {
   }
 
   async start() {
+    console.log("Starting shuttle");
     await this.ensureMigrations();
     // Hub subscriber listens to events from the hub and writes them to a redis stream. This allows for scaling by
     // splitting events to multiple streams
     await this.hubSubscriber.start();
-
+    console.log("Hub subscriber started");
     // Sleep 10 seconds to give the subscriber a chance to create the stream for the first time.
     await new Promise((resolve) => setTimeout(resolve, 10_000));
-
+    console.log("Stream consumer started");
     log.info("Starting stream consumer");
     // Stream consumer reads from the redis stream and inserts them into postgres
     await this.streamConsumer.start(async (event) => {
       await this.processHubEvent(event);
       return ok({ skipped: false });
     });
+    console.log("Stream consumer started");
   }
 
   async reconcileFids(fids: number[]) {
@@ -316,6 +318,7 @@ if (import.meta.url.endsWith(url.pathToFileURL(process.argv[1] || "").toString()
     // Start the worker after initiating a backfill
     const worker = getWorker(app, app.redis.client, log, CONCURRENCY);
     await worker.run();
+    console.log("Worker started");
     return;
   }
 
