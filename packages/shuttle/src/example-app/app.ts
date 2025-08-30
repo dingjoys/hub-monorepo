@@ -19,7 +19,7 @@ import {
   getStorageUnitExpiry,
   getStorageUnitType,
   HubEvent,
-  HubInfoRequest,
+  GetInfoRequest,
   isCastAddMessage,
   isCastRemoveMessage,
   isIdRegisterOnChainEvent,
@@ -257,7 +257,7 @@ export class App implements MessageHandler {
     if (fids.length === 0) {
       let maxFid = MAX_FID ? parseInt(MAX_FID) : undefined;
       if (!maxFid) {
-        const getInfoResult = await this.hubSubscriber.hubClient?.getInfo(HubInfoRequest.create({}));
+        const getInfoResult = await this.hubSubscriber.hubClient?.getInfo(GetInfoRequest.create({}));
         if (getInfoResult?.isErr()) {
           log.error("Failed to get max fid", getInfoResult.error);
           throw getInfoResult.error;
@@ -334,6 +334,7 @@ if (import.meta.url.endsWith(url.pathToFileURL(process.argv[1] || "").toString()
     const worker = getWorker(app, app.redis.client, log, CONCURRENCY);
     log.info("Worker running");
     await worker.run();
+    log.info("Worker started");
   }
 
   // for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
